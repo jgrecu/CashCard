@@ -3,7 +3,7 @@ CashCard service for Family Cash Cards
 
 ```
 Request
-  URI: /cashcards/{id}
+  URI: /api/v1/cashcards/{id}
   HTTP Verb: GET
   Body: None
 
