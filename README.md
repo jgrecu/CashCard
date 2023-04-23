@@ -1,3 +1,21 @@
-# Cash Card
+# CashCard
+CashCard service for Family Cash Cards
 
-Family Cash Card service—an app for families to manage allowances in the form of digital debit cards. By building this service from start to finish, I wanted to learn about REST APIs, Spring Security, data persistence, metrics, and modern application development.
+```
+Request
+  URI: /api/v1/cashcards/{id}
+  HTTP Verb: GET
+  Body: None
+
+Response:
+  HTTP Status:
+    200 OK if the user is authorized and the Cash Card was successfully retrieved
+    403 UNAUTHORIZED if the user is unauthenticated or unauthorized
+    404 NOT FOUND if the user is authenticated and authorized but the Cash Card cannot be found
+  Response Body Type: JSON
+  Example Response Body:
+    {
+      "id": 99,
+      "amount": 123.45
+    }
+```
