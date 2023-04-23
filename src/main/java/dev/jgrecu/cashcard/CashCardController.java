@@ -11,7 +11,7 @@ import java.util.Optional;
 @RequestMapping("/api/v1/cashcards")
 public class CashCardController {
 
-    private CashCardRepository cashCardRepository;
+    private final CashCardRepository cashCardRepository;
 
     public CashCardController(CashCardRepository cashCardRepository) {
         this.cashCardRepository = cashCardRepository;
