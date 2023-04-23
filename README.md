@@ -2,9 +2,9 @@
 CashCard service for Family Cash Cards
 
 ```
-Request
+Request:
   URI: /api/v1/cashcards/{id}
-  HTTP Verb: GET
+  Method: GET
   Body: None
 
 Response:
@@ -18,4 +18,19 @@ Response:
       "id": 99,
       "amount": 123.45
     }
+
+---
+Request:
+  URI: /api/v1/cashcards/
+  Method: POST
+  Body:
+    {
+      "amount": 123.45
+    }
+
+Response:
+  HTTP Status:
+    Status Code: 201 CREATED
+    Header: Location=/cashcards/42
+
 ```
