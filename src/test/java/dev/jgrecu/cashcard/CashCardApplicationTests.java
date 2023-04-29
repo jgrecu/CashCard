@@ -196,6 +196,9 @@ class CashCardApplicationTests {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 4c87349 (Implement DELETE)
 
     @Test
     @DirtiesContext
@@ -218,6 +221,9 @@ class CashCardApplicationTests {
                 .exchange("/api/v1/cashcards/99999", HttpMethod.DELETE, null, Void.class);
         assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
+<<<<<<< HEAD
 =======
 >>>>>>> b332145 (Implement PUT)
+=======
+>>>>>>> 4c87349 (Implement DELETE)
 }
