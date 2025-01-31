@@ -71,10 +71,6 @@ public class CashCardController {
         return ResponseEntity.notFound().build();
     }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 4c87349 (Implement DELETE)
     @DeleteMapping("/{id}")
     private ResponseEntity<Void> deleteCashCard(@PathVariable Long id, Principal principal) {
         if (cashCardRepository.existsByIdAndOwner(id, principal.getName())) {
@@ -84,11 +80,6 @@ public class CashCardController {
         return ResponseEntity.notFound().build();
     }
 
-<<<<<<< HEAD
-=======
->>>>>>> b332145 (Implement PUT)
-=======
->>>>>>> 4c87349 (Implement DELETE)
     private CashCard findCashCard(Long requestedId, Principal principal) {
         return cashCardRepository.findByIdAndOwner(requestedId, principal.getName());
     }
