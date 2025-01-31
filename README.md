@@ -9,4 +9,4 @@ Family Cash Card service—an app for families to manage allowances in the form 
 - Implement test-driven development.
 - Convert database and Java objects automatically using Spring Data JDBC.
 
-Project uses Java 17 and Spring-Boot 3.0.6
+Project uses Java 21 and Spring-Boot 3.4.2
