@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- This replaces: id 'org.springframework.boot' version '3.0.5' -->
+    <!-- and: id 'io.spring.dependency-management' version '1.1.0' -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.0.5</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <!-- group = 'dev.jgrecu' -->
+    <groupId>dev.jgrecu</groupId>
+    <!-- rootProject.name = 'CashCard' -->
+    <artifactId>CashCard</artifactId>
+    <!-- version = '0.0.1-SNAPSHOT' -->
+    <version>0.0.1-SNAPSHOT</version>
+    <name>CashCard</name>
+
+    <properties>
+        <!-- sourceCompatibility = '17' -->
+        <java.version>17</java.version>
+    </properties>
+
+    <dependencies>
+        <!-- implementation 'org.springframework.boot:spring-boot-starter-web' -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- implementation 'org.springframework.boot:spring-boot-starter-security' -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- implementation 'org.springframework.data:spring-data-jdbc' -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jdbc</artifactId>
+        </dependency>
+
+        <!-- runtimeOnly 'org.postgresql:postgresql' -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- testImplementation 'org.springframework.boot:spring-boot-starter-test' -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- testImplementation 'com.h2database:h2' -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Replaces: id 'org.springframework.boot' plugin (for packaging) -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
