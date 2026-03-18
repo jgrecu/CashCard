@@ -8,7 +8,9 @@ A RESTful API service for managing family cash cards -- digital debit cards desi
 - **Authentication & Authorization** -- HTTP Basic authentication with role-based access control (Spring Security)
 - **Owner Isolation** -- Users can only access their own cash cards
 - **Pagination & Sorting** -- Configurable pagination with default sorting by amount
-- **Data Persistence** -- Spring Data JDBC with PostgreSQL (H2 for testing)
+- **Data Persistence** -- Spring Data JDBC with PostgreSQL
+- **Database Migrations** -- Flyway for versioned schema management
+- **Integration Testing** -- Testcontainers with real PostgreSQL instances
 
 ## Tech Stack
 
@@ -19,7 +21,8 @@ A RESTful API service for managing family cash cards -- digital debit cards desi
 | Security        | Spring Security         |
 | Data Access     | Spring Data JDBC        |
 | Database        | PostgreSQL              |
-| Test Database   | H2 (in-memory)         |
+| Migrations      | Flyway                  |
+| Testing         | Testcontainers (PostgreSQL) |
 | Build Tool      | Maven                   |
 
 ## API Endpoints
@@ -38,6 +41,7 @@ A RESTful API service for managing family cash cards -- digital debit cards desi
 
 - Java 25+
 - Maven 3.9+
+- Docker or Podman (for tests)
 - PostgreSQL (for production)
 
 ### Build & Test
