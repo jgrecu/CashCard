@@ -6,7 +6,8 @@ import net.minidev.json.JSONArray;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.resttestclient.TestRestTemplate;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import java.net.URI;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureTestRestTemplate
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class CashCardApplicationTests {
 
@@ -216,5 +218,128 @@ class CashCardApplicationTests {
                 .withBasicAuth("sarah1", "abc123")
                 .exchange("/api/v1/cashcards/99999", HttpMethod.DELETE, null, Void.class);
         assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    // --- Edge & Corner Cases ---
+
+    @Test
+    void shouldNotAllowUpdateOfAnotherUsersCard() {
+        CashCard cashCardUpdate = new CashCard(null, 999.99, null);
+        HttpEntity<CashCard> request = new HttpEntity<>(cashCardUpdate);
+        ResponseEntity<Void> response = restTemplate
+                .withBasicAuth("sarah1", "abc123")
+                .exchange("/api/v1/cashcards/102", HttpMethod.PUT, request, Void.class); // kumar2's card
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    void shouldNotAllowDeletionOfAnotherUsersCard() {
+        ResponseEntity<Void> response = restTemplate
+                .withBasicAuth("sarah1", "abc123")
+                .exchange("/api/v1/cashcards/102", HttpMethod.DELETE, null, Void.class); // kumar2's card
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    @DirtiesContext
+    void shouldCreateACashCardWithNegativeAmount() {
+        CashCard newCashCard = new CashCard(null, -50.00, null);
+        ResponseEntity<Void> response = restTemplate
+                .withBasicAuth("sarah1", "abc123")
+                .postForEntity("/api/v1/cashcards", newCashCard, Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+        URI location = response.getHeaders().getLocation();
+        ResponseEntity<String> getResponse = restTemplate
+                .withBasicAuth("sarah1", "abc123")
+                .getForEntity(location, String.class);
+        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        DocumentContext documentContext = JsonPath.parse(getResponse.getBody());
+        Double amount = documentContext.read("$.amount");
+        assertThat(amount).isEqualTo(-50.00);
+    }
+
+    @Test
+    @DirtiesContext
+    void shouldCreateACashCardWithZeroAmount() {
+        CashCard newCashCard = new CashCard(null, 0.00, null);
+        ResponseEntity<Void> response = restTemplate
+                .withBasicAuth("sarah1", "abc123")
+                .postForEntity("/api/v1/cashcards", newCashCard, Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+        URI location = response.getHeaders().getLocation();
+        ResponseEntity<String> getResponse = restTemplate
+                .withBasicAuth("sarah1", "abc123")
+                .getForEntity(location, String.class);
+        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        DocumentContext documentContext = JsonPath.parse(getResponse.getBody());
+        Double amount = documentContext.read("$.amount");
+        assertThat(amount).isEqualTo(0.00);
+    }
+
+    @Test
+    void shouldReturnEmptyListWhenPageIsOutOfRange() {
+        ResponseEntity<String> response = restTemplate
+                .withBasicAuth("sarah1", "abc123")
+                .getForEntity("/api/v1/cashcards?page=100&size=1", String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        DocumentContext documentContext = JsonPath.parse(response.getBody());
+        JSONArray page = documentContext.read("$[*]");
+        assertThat(page.size()).isEqualTo(0);
+    }
+
+    @Test
+    void shouldRejectUnauthenticatedPostRequest() {
+        CashCard newCashCard = new CashCard(null, 100.00, null);
+        ResponseEntity<Void> response = restTemplate
+                .postForEntity("/api/v1/cashcards", newCashCard, Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    void shouldRejectUnauthenticatedPutRequest() {
+        CashCard cashCardUpdate = new CashCard(null, 50.00, null);
+        HttpEntity<CashCard> request = new HttpEntity<>(cashCardUpdate);
+        ResponseEntity<Void> response = restTemplate
+                .exchange("/api/v1/cashcards/99", HttpMethod.PUT, request, Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    void shouldRejectUnauthenticatedDeleteRequest() {
+        ResponseEntity<Void> response = restTemplate
+                .exchange("/api/v1/cashcards/99", HttpMethod.DELETE, null, Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    void shouldRejectNonOwnerPostRequest() {
+        CashCard newCashCard = new CashCard(null, 100.00, null);
+        ResponseEntity<Void> response = restTemplate
+                .withBasicAuth("hank-owns-no-cards", "qrs456")
+                .postForEntity("/api/v1/cashcards", newCashCard, Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    }
+
+    @Test
+    void shouldRejectNonOwnerPutRequest() {
+        CashCard cashCardUpdate = new CashCard(null, 50.00, null);
+        HttpEntity<CashCard> request = new HttpEntity<>(cashCardUpdate);
+        ResponseEntity<Void> response = restTemplate
+                .withBasicAuth("hank-owns-no-cards", "qrs456")
+                .exchange("/api/v1/cashcards/99", HttpMethod.PUT, request, Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    }
+
+    @Test
+    void shouldRejectNonOwnerDeleteRequest() {
+        ResponseEntity<Void> response = restTemplate
+                .withBasicAuth("hank-owns-no-cards", "qrs456")
+                .exchange("/api/v1/cashcards/99", HttpMethod.DELETE, null, Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     }
 }

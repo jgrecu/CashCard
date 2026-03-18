@@ -18,12 +18,11 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests()
-                .requestMatchers("/api/v1/cashcards/**")
-                .hasRole("CARD-OWNER")
-                .and()
+        http
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/v1/cashcards/**").hasRole("CARD-OWNER"))
                 .csrf(AbstractHttpConfigurer::disable)
-                .httpBasic();
+                .httpBasic(Customizer.withDefaults());
         return http.build();
     }
 
